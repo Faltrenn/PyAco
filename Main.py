@@ -1,39 +1,31 @@
 # PyAço: Sistema de gestão de circo
 
+from Banco import Banco, Tabela, Funcionario, Atracao
+
+
 largura = 50
 
-banco = {
-    "funcionarios": {},
-    "atracoes": {},
-    "espetaculos": {},
-}
+tabelaFuncionarios = Tabela("funcionarios")
+tabelaAtracoes = Tabela("atracoes")
+
+banco = Banco("Banco", [tabelaFuncionarios, tabelaAtracoes])
 
 def cadastrarFuncionario() -> dict:
     nome = input("Nome: ")
     cpf = input("CPF: ")
     papel = input("Papel: ")
     telefone = input("Telefone: ")
-    funcionario = {
-        "nome": nome,
-        "cpf": cpf,
-        "papel": papel,
-        "telefone": telefone,
-    }
-    banco["funcionarios"][cpf] = funcionario
+    funcionario = Funcionario(nome, cpf, papel, telefone)
+
+    tabelaFuncionarios.adicionar(funcionario)
 
 def consultarFuncionario():
-    nome = input("Digite o nome do funcionário")
-    funcionarios = []
-    for cpf, funcionario in banco["funcionarios"].items():
-        if nome.upper() in funcionario["nome"].upper():
-            funcionarios.append(funcionario)
-    for funcionario in funcionarios:
-        print("-" * largura)
-        print(f"Nome: {funcionario['nome']}")
-        print(f"CPF: {funcionario['cpf']}")
-        print(f"Papel: {funcionario['papel']}")
-        print(f"Telefone: {funcionario['telefone']}")
-        print("-" * largura)
+    tabelaFuncionarios.show()
+
+    chave_primaria = input("Digite a chave primaria do funcionario: ")
+    
+    funcionario = tabelaFuncionarios.pesquisar(chave_primaria)
+    print(f"Funcionario: {funcionario.get_data() if funcionario else 'Não encontrado'}")
 
 menuFuncionariosOpcoes = [
     ["Cadastrar funcionário", cadastrarFuncionario],
@@ -46,32 +38,45 @@ def menuFuncionarios():
         for c, opcao in enumerate(menuFuncionariosOpcoes):
             print(f"{c + 1} - {opcao[0]}")
         opc = input("Digite a opção desejada, ou enter para voltar:")
+        if opc == "":
+            continue
         menuFuncionariosOpcoes[int(opc)-1][1]()
 
-def menuAtracoes():
-    print("Cadastro de atracões")
-    print("Nome")
-    print("Funcionários")
-    print("Consultar atracão")
-    print("Nome")
 
 def cadastrarAtracao():
     nome = input("Nome: ")
+
+    tabelaFuncionarios.show()
+
+    opc = None
     funcionarios = []
     while opc != "":
-        c = 0
-        for funcionario in banco["funcionarios"]:
-            if funcionario not in funcionarios:
-                print(f"{c + 1} - {funcionario['nome']}")
-                c += 1
-        opc = input("Digite o número do funcionário ou enter para sair: ")
-        if opc != "":
-            funcionarios.append(banco["funcionarios"][int(opc) - 1])
-    atracao = {
-        "nome": nome,
-        "funcionarios": funcionarios,
-    }
-    banco["atracoes"][nome] = atracao
+        opc = input("Digite a chave primaria do funcionario: ")
+        if opc == "":
+            continue
+        funcionario = tabelaFuncionarios.pesquisar(opc)
+        if funcionario:
+            funcionarios.append(funcionario)
+        else:
+            print("Funcionario não encontrado")
+    tabelaAtracoes.adicionar(Atracao(nome, funcionarios))
+
+
+menuAtracoesOpcoes = [
+    ["Cadastrar atracão", cadastrarAtracao],
+    ["Visualizar atrações", tabelaAtracoes.show],
+]
+
+def menuAtracoes():
+    opc = None
+    while opc != "":
+        for c, opcao in enumerate(menuAtracoesOpcoes):
+            print(f"{c + 1} - {opcao[0]}")
+        opc = input("Digite a opção desejada, ou enter para voltar:")
+        if opc == "":
+            continue
+        menuAtracoesOpcoes[int(opc)-1][1]()
+
 
 def menuEspetaculos():
     print("Cadastro de espetáculos")
@@ -84,6 +89,7 @@ def menuEspetaculos():
 
 def sair():
     print("Sair")
+    banco.salvar()
     exit()
 
 opcoesMenu = [
@@ -97,10 +103,10 @@ print("=" * largura)
 print(f"{' PyAço: Sistema de gestão de circo ':=^{largura}}")
 print("=" * largura)
 
-for c, opcao in enumerate(opcoesMenu):
-    print(f"{c + 1} - {opcao[0]}")
-
 while True:
+    for c, opcao in enumerate(opcoesMenu):
+        print(f"{c + 1} - {opcao[0]}")
+
     opcao = int(input("Digite a opção desejada: "))
 
     opcoesMenu[opcao - 1][1]()
