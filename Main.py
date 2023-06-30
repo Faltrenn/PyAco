@@ -108,7 +108,8 @@ def menuAtracoes():
 
 def cadastrarPapel():
     nome = input("Nome: ")
-    papel = Papel(nome)
+    descricao = input("Descrição: ")
+    papel = Papel(nome, descricao)
     tabelaPapel.adicionar(papel)
 
 def consultarPapel():
