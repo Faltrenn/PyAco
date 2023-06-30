@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Type
 from pickle import dump, load
     
 class Item:
@@ -7,7 +7,6 @@ class Item:
     
     def get_data(self):
         pass
-
 
 class Funcionario(Item):
     def __init__(self, nome: str, cpf: str, papel: int, telefone: str) -> None:
@@ -38,22 +37,43 @@ class Atracao(Item):
 
 
 class Tabela:
-    def __init__(self, nome: str) -> None:
+    def __init__(self, nome: str, tipo: Type) -> None:
         self.nome = nome
         self.items: List[Item] = []
         self.banco: Banco = None
+        self.tipo = tipo
+    
+    def salvar(self) -> None:
+        if self.banco:
+            self.banco.salvar()
     
     def adicionar(self, item: Item):
         self.items.append(item)
 
-        if self.banco:
-            self.banco.salvar()
+        self.salvar()
     
     def pesquisar(self, chave_primaria: str) -> Item:
         for item in self.items:
             if item.chave_primaria == chave_primaria:
                 return item
         return None
+
+    def remover(self, chave_primaria: str) -> None:
+        item = self.pesquisar(chave_primaria)
+        if item in self.items:
+            self.items.remove(item)
+
+            self.salvar()
+    
+    def editar(self, chave_primaria: str, item: Item) -> None:
+        if isinstance(item, self.tipo):
+            for item2 in self.items:
+                if item2.chave_primaria == chave_primaria:
+                    self.items.remove(item2)
+                    self.items.append(item)
+                    break
+
+            self.salvar()
 
     def set_items(self, items: List[Item]) -> None:
         self.items = items

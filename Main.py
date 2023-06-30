@@ -5,8 +5,8 @@ from Banco import Banco, Tabela, Funcionario, Atracao
 
 largura = 50
 
-tabelaFuncionarios = Tabela("funcionarios")
-tabelaAtracoes = Tabela("atracoes")
+tabelaFuncionarios = Tabela("funcionarios", Funcionario)
+tabelaAtracoes = Tabela("atracoes", Atracao)
 
 banco = Banco("Banco", [tabelaFuncionarios, tabelaAtracoes])
 
@@ -27,9 +27,37 @@ def consultarFuncionario():
     funcionario = tabelaFuncionarios.pesquisar(chave_primaria)
     print(f"Funcionario: {funcionario.get_data() if funcionario else 'Não encontrado'}")
 
+def editarFuncionario():
+    tabelaFuncionarios.show()
+
+    chave_primaria = input("Digite a chave primaria do funcionario: ")
+    
+    funcionario = tabelaFuncionarios.pesquisar(chave_primaria)
+    if funcionario:
+        print(f"Funcionario: {funcionario.get_data()}")
+
+        nome = input("Nome: ")
+        cpf = input("CPF: ")
+        papel = input("Papel: ")
+        telefone = input("Telefone: ")
+        funcionario = Funcionario(nome, cpf, papel, telefone)
+
+        tabelaFuncionarios.editar(chave_primaria, funcionario)
+    else:
+        print("Funcionario não encontrado")
+
+def removerFuncionario():
+    tabelaFuncionarios.show()
+
+    chave_primaria = input("Digite a chave primaria do funcionario: ")
+    
+    tabelaFuncionarios.remover(chave_primaria)
+
 menuFuncionariosOpcoes = [
     ["Cadastrar funcionário", cadastrarFuncionario],
     ["Consultar funcionário", consultarFuncionario],
+    ["Editar funcionário", editarFuncionario],
+    ["Remover funcionário", removerFuncionario],
 ]
 
 def menuFuncionarios():
