@@ -177,6 +177,7 @@ opcoesMenu = [
     ["Menu de funcionários", menuFuncionarios],
     ["Menu de atracões", menuAtracoes],
     ["Menu de espetáculos", menuEspetaculos],
+    ["Menu de papel", menuPapel],
     ["Sair", sair],
 ]
 
