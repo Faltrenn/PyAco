@@ -8,8 +8,21 @@ class Item:
     def get_data(self):
         pass
 
+
+class Papel(Item):
+    def __init__(self, nome: str, descricao: str) -> None:
+        Item.__init__(self, nome)
+        self.nome = nome
+        self.descricao = descricao
+    
+    def get_data(self):
+        return {
+            "descricao": self.descricao
+        }
+
+
 class Funcionario(Item):
-    def __init__(self, nome: str, cpf: str, papel: int, telefone: str) -> None:
+    def __init__(self, nome: str, cpf: str, papel: Papel, telefone: str) -> None:
         Item.__init__(self, cpf)
         self.nome = nome
         self.cpf = cpf
@@ -37,7 +50,7 @@ class Atracao(Item):
 
 
 class Tabela:
-    def __init__(self, nome: str, tipo: Type) -> None:
+    def __init__(self, nome: str, tipo: Type[Item]) -> None:
         self.nome = nome
         self.items: List[Item] = []
         self.banco: Banco = None

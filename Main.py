@@ -1,14 +1,15 @@
 # PyAço: Sistema de gestão de circo
 
-from Banco import Banco, Tabela, Funcionario, Atracao
+from Banco import Banco, Tabela, Funcionario, Atracao, Papel
 
 
 largura = 50
 
 tabelaFuncionarios = Tabela("funcionarios", Funcionario)
 tabelaAtracoes = Tabela("atracoes", Atracao)
+tabelaPapel = Tabela("papel", Papel)
 
-banco = Banco("Banco", [tabelaFuncionarios, tabelaAtracoes])
+banco = Banco("Banco", [tabelaFuncionarios, tabelaAtracoes, tabelaPapel])
 
 def cadastrarFuncionario() -> dict:
     nome = input("Nome: ")
@@ -105,6 +106,58 @@ def menuAtracoes():
             continue
         menuAtracoesOpcoes[int(opc)-1][1]()
 
+def cadastrarPapel():
+    nome = input("Nome: ")
+    papel = Papel(nome)
+    tabelaPapel.adicionar(papel)
+
+def consultarPapel():
+    tabelaPapel.show()
+
+    chave_primaria = input("Digite a chave primaria do papel: ")
+    
+    papel = tabelaPapel.pesquisar(chave_primaria)
+    print(f"Papel: {papel.get_data() if papel else 'Não encontrado'}")
+
+def editarPapel():
+    tabelaPapel.show()
+
+    chave_primaria = input("Digite a chave primaria do papel: ")
+    
+    papel = tabelaPapel.pesquisar(chave_primaria)
+    if papel:
+        print(f"Papel: {papel.get_data()}")
+
+        nome = input("Nome: ")
+        papel = Papel(nome)
+
+        tabelaPapel.editar(chave_primaria, papel)
+    else:
+        print("Papel não encontrado")
+
+def removerPapel():
+    tabelaPapel.show()
+
+    chave_primaria = input("Digite a chave primaria do papel: ")
+    
+    tabelaPapel.remover(chave_primaria)
+
+menuPapelOpcoes = [
+    ["Cadastrar papel", cadastrarPapel],
+    ["Consultar papel", consultarPapel],
+    ["Editar papel", editarPapel],
+    ["Remover papel", removerPapel],
+]
+
+def menuPapel():
+    opc = None
+    while opc != "":
+        for c, opcao in enumerate(menuPapelOpcoes):
+            print(f"{c + 1} - {opcao[0]}")
+        opc = input("Digite a opção desejada, ou enter para voltar:")
+        if opc == "":
+            continue
+        menuPapelOpcoes[int(opc)-1][1]()
 
 def menuEspetaculos():
     print("Cadastro de espetáculos")
