@@ -2,9 +2,13 @@ from typing import List, Type
 from pickle import dump, load
     
 class Item:
+    dependencias = []
     def __init__(self, chave_primaria: str) -> None:
         self.chave_primaria = chave_primaria
     
+    def get_dependencias(self) -> dict:
+        return None
+
     def get_data(self):
         pass
 
@@ -20,8 +24,12 @@ class Papel(Item):
             "descricao": self.descricao
         }
 
+    def __str__(self) -> str:
+        return self.nome
+
 
 class Funcionario(Item):
+    dependencias = [Papel]
     def __init__(self, nome: str, cpf: str, papel: Papel, telefone: str) -> None:
         Item.__init__(self, cpf)
         self.nome = nome
@@ -29,15 +37,21 @@ class Funcionario(Item):
         self.papel = papel
         self.telefone = telefone
     
+    def get_dependencias(self) -> dict:
+        return {
+            Papel: self.papel
+        }
+    
     def get_data(self):
         return {
             "nome": self.nome,
-            "papel": self.papel,
+            "papel": str(self.papel),
             "telefone": self.telefone
         }
 
 
 class Atracao(Item):
+    dependencias = [Funcionario]
     def __init__(self, nome: str, funcionarios: List[Funcionario]) -> None:
         Item.__init__(self, nome)
         self.nome = nome
@@ -75,6 +89,8 @@ class Tabela:
         item = self.pesquisar(chave_primaria)
         if item in self.items:
             self.items.remove(item)
+
+            self.banco.remover(item)
 
             self.salvar()
     
@@ -124,6 +140,17 @@ class Banco:
         except FileNotFoundError:
             pass
     
+    def remover(self, item: Item) -> None:
+        for tabela in self.tabelas:
+            for dependencia in tabela.tipo.dependencias:
+                if isinstance(item, dependencia):
+                    for i in tabela.items:
+                        for dep, dep_item in i.get_dependencias().items():
+                            print(i.get_data())
+                            if isinstance(item, dep) and dep_item.chave_primaria == item.chave_primaria:
+                                tabela.remover(i.chave_primaria)
+                                break
+
     def salvar(self) -> None:
         data = {}
 

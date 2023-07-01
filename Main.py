@@ -14,7 +14,11 @@ banco = Banco("Banco", [tabelaFuncionarios, tabelaAtracoes, tabelaPapel])
 def cadastrarFuncionario() -> dict:
     nome = input("Nome: ")
     cpf = input("CPF: ")
-    papel = input("Papel: ")
+
+    papel = None
+    while papel == None:
+        tabelaPapel.show()
+        papel = tabelaPapel.pesquisar(input("Papel: "))
     telefone = input("Telefone: ")
     funcionario = Funcionario(nome, cpf, papel, telefone)
 
