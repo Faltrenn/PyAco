@@ -1,7 +1,7 @@
 # PyAço: Sistema de gestão de circo
 
-from Banco import Banco, Tabela, Funcionario, Atracao, Papel
-
+from Banco import Banco
+from Tabelas import Tabela, Funcionario, Atracao, Papel
 
 largura = 50
 

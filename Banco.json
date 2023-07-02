@@ -1,5 +1,10 @@
 {
-    "papel": [],
+    "papel": [
+        {
+            "nome": "123",
+            "descricao": "descricao"
+        }
+    ],
     "funcionarios": [],
     "atracoes": []
 }
