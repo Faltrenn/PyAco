@@ -1,0 +1,89 @@
+{
+    "papel": [
+        {
+            "nome": "Papel1",
+            "descricao": "Descricao1"
+        },
+        {
+            "nome": "Papel2",
+            "descricao": "Descricao2"
+        },
+        {
+            "nome": "Papel3",
+            "descricao": "Descricao3"
+        },
+        {
+            "nome": "Papel1",
+            "descricao": "Descricao1"
+        },
+        {
+            "nome": "Papel2",
+            "descricao": "Descricao2"
+        },
+        {
+            "nome": "Papel3",
+            "descricao": "Descricao3"
+        },
+        {
+            "nome": "Papel1",
+            "descricao": "Descricao1"
+        },
+        {
+            "nome": "Papel2",
+            "descricao": "Descricao2"
+        },
+        {
+            "nome": "Papel3",
+            "descricao": "Descricao3"
+        }
+    ],
+    "funcionario": [
+        {
+            "nome": "Funcionario1",
+            "cpf": "1",
+            "papel": "Papel1"
+        },
+        {
+            "nome": "Funcionario2",
+            "cpf": "2",
+            "papel": "Papel2"
+        },
+        {
+            "nome": "Funcionario3",
+            "cpf": "3",
+            "papel": "Papel3"
+        },
+        {
+            "nome": "Funcionario4",
+            "cpf": "4",
+            "papel": "Papel1"
+        },
+        {
+            "nome": "Funcionario5",
+            "cpf": "5",
+            "papel": "Papel2"
+        },
+        {
+            "nome": "Funcionario6",
+            "cpf": "6",
+            "papel": "Papel3"
+        }
+    ],
+    "atracoes": [
+        {
+            "nome": "Atracao1",
+            "funcionarios": [
+                "1",
+                "2"
+            ]
+        },
+        {
+            "nome": "Atracao2",
+            "funcionarios": [
+                "3",
+                "4",
+                "5"
+            ]
+        }
+    ]
+}

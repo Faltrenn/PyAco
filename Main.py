@@ -9,7 +9,7 @@ tabelaFuncionarios = Tabela("funcionarios", Funcionario)
 tabelaAtracoes = Tabela("atracoes", Atracao)
 tabelaPapel = Tabela("papel", Papel)
 
-banco = Banco("Banco", [tabelaFuncionarios, tabelaAtracoes, tabelaPapel])
+banco = Banco("Banco", [tabelaPapel, tabelaFuncionarios, tabelaAtracoes])
 
 def cadastrarFuncionario() -> dict:
     nome = input("Nome: ")
@@ -18,7 +18,7 @@ def cadastrarFuncionario() -> dict:
     papel = None
     while papel == None:
         tabelaPapel.show()
-        papel = tabelaPapel.pesquisar(input("Papel: "))
+        papel = input("Papel: ")
     telefone = input("Telefone: ")
     funcionario = Funcionario(nome, cpf, papel, telefone)
 

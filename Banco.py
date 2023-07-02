@@ -1,5 +1,5 @@
 from typing import List, Type
-from pickle import dump, load
+from json import dumps, loads
     
 class Item:
     dependencias = []
@@ -13,66 +13,15 @@ class Item:
         pass
 
 
-class Papel(Item):
-    def __init__(self, nome: str, descricao: str) -> None:
-        Item.__init__(self, nome)
-        self.nome = nome
-        self.descricao = descricao
-    
-    def get_data(self):
-        return {
-            "descricao": self.descricao
-        }
-
-    def __str__(self) -> str:
-        return self.nome
-
-
-class Funcionario(Item):
-    dependencias = [Papel]
-    def __init__(self, nome: str, cpf: str, papel: Papel, telefone: str) -> None:
-        Item.__init__(self, cpf)
-        self.nome = nome
-        self.cpf = cpf
-        self.papel = papel
-        self.telefone = telefone
-    
-    def get_dependencias(self) -> dict:
-        return {
-            Papel: self.papel
-        }
-    
-    def get_data(self):
-        return {
-            "nome": self.nome,
-            "papel": str(self.papel),
-            "telefone": self.telefone
-        }
-
-
-class Atracao(Item):
-    dependencias = [Funcionario]
-    def __init__(self, nome: str, funcionarios: List[Funcionario]) -> None:
-        Item.__init__(self, nome)
-        self.nome = nome
-        self.funcionarios = funcionarios
-    
-    def get_data(self):
-        return {
-            "funcionarios": [funcionario.get_data() for funcionario in self.funcionarios]
-        }
-
-
 class Tabela:
     def __init__(self, nome: str, tipo: Type[Item]) -> None:
         self.nome = nome
         self.items: List[Item] = []
-        self.banco: Banco = None
         self.tipo = tipo
     
     def salvar(self) -> None:
-        if self.banco:
-            self.banco.salvar()
+        if Banco.banco:
+            Banco.banco.salvar()
     
     def adicionar(self, item: Item):
         self.items.append(item)
@@ -90,7 +39,7 @@ class Tabela:
         if item in self.items:
             self.items.remove(item)
 
-            self.banco.remover(item)
+            Banco.banco.remover(item)
 
             self.salvar()
     
@@ -104,13 +53,20 @@ class Tabela:
 
             self.salvar()
 
-    def set_items(self, items: List[Item]) -> None:
-        self.items = items
+    def set_items(self, items: List[dict]) -> None:
+        self.items = []
+        self.objeto = self.tipo()
+        atributos = {}
+        for item in items:
+            for atributo in item:
+                if hasattr(self.objeto, atributo):
+                    atributos[atributo] = item[atributo]
+            self.items.append(self.tipo(**atributos))
 
-    def get_data(self) -> dict:
-        data = {}
+    def get_data(self) -> list:
+        data = []
         for item in self.items:
-            data[item.chave_primaria] = item.get_data()
+            data.append(item.get_data())
         return data
     
     def show(self) -> None:
@@ -123,22 +79,24 @@ class Tabela:
 
 
 class Banco:
+    banco = None
     def __init__(self, nome: str, tabelas: List[Tabela]) -> None:
+        Banco.banco = self
+
         self.nome = nome
         self.tabelas = tabelas
-        for tabela in self.tabelas:
-            tabela.banco = self
-
+        
+        self.carregar()
+    
+    def carregar(self) -> None:
         try:
-            with open(f"{self.nome}", "rb") as banco:
-                tabelas = load(banco)
-                for tabela in tabelas.values():
-                    for tabela2 in self.tabelas:
-                        if tabela.nome == tabela2.nome:
-                            tabela2.set_items(tabela.items)
-                            break
-        except FileNotFoundError:
-            pass
+            with open(f"{self.nome}.json", "r") as arquivo:
+                data = loads(arquivo.read())
+                for tabela in self.tabelas:
+                    if tabela.nome in data:
+                        tabela.set_items(data[tabela.nome])
+        except Exception as error:
+            print(error)
     
     def remover(self, item: Item) -> None:
         for tabela in self.tabelas:
@@ -146,16 +104,73 @@ class Banco:
                 if isinstance(item, dependencia):
                     for i in tabela.items:
                         for dep, dep_item in i.get_dependencias().items():
-                            print(i.get_data())
                             if isinstance(item, dep) and dep_item.chave_primaria == item.chave_primaria:
                                 tabela.remover(i.chave_primaria)
                                 break
-
-    def salvar(self) -> None:
-        data = {}
-
+    
+    def pesquisar(self, item: Item) -> Item:
         for tabela in self.tabelas:
-            data[tabela.nome] = tabela
+            if isinstance(item, tabela.tipo):
+                return tabela.pesquisar(item.chave_primaria)
+        return None
+    
+    def get_data(self) -> dict:
+        data = {}
+        for tabela in self.tabelas:
+            data[tabela.nome] = tabela.get_data()
+        return data
+    
+    def salvar(self) -> None:
+        with open(f"{self.nome}.json", "w") as arquivo:
+            arquivo.write(dumps(self.get_data(), indent=4))
 
-        with open(self.nome, "wb") as banco:
-            dump(data, banco)
+
+class Papel(Item):
+    def __init__(self, nome: str = "nome", descricao: str = "descricao") -> None:
+        super().__init__(nome)
+        self.nome = nome
+        self.descricao = descricao
+    
+    def get_data(self):
+        return {
+            "nome": self.nome,
+            "descricao": self.descricao,
+        }
+
+    def __str__(self) -> str:
+        return self.nome
+
+
+class Funcionario(Item):
+    dependencias = [Papel]
+    def __init__(self, nome: str = "nome", cpf: str = "cpf", papel: str = "nome") -> None:
+        super().__init__(cpf)
+        self.nome = nome
+        self.cpf = cpf
+        self.papel = Banco.banco.pesquisar(Papel(papel))
+    
+    def get_dependencias(self) -> dict:
+        return {
+            Papel: self.papel
+        }
+    
+    def get_data(self):
+        return {
+            "nome": self.nome,
+            "cpf": self.cpf,
+            "papel": self.papel.chave_primaria,
+        }
+
+
+class Atracao(Item):
+    dependencias = [Funcionario]
+    def __init__(self, nome: str = "nome", funcionarios: List[str] = []) -> None:
+        super().__init__(nome)
+        self.nome = nome
+        self.funcionarios = [Banco.banco.pesquisar(Funcionario(cpf=funcionario)) for funcionario in funcionarios]
+    
+    def get_data(self):
+        return {
+            "nome": self.nome,
+            "funcionarios": [funcionario.chave_primaria for funcionario in self.funcionarios],
+        }
