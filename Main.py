@@ -1,16 +1,15 @@
 # PyAço: Sistema de gestão de circo
 
 from Banco import Banco
-from Tabelas import Tabela, Funcionario, Atracao, Papel, Espetaculo
+from Tabelas import Tabela, Funcionario, Atracao, Papel
 
 largura = 50
 
 tabelaFuncionarios = Tabela("funcionarios", Funcionario)
 tabelaAtracoes = Tabela("atracoes", Atracao)
 tabelaPapeis = Tabela("papeis", Papel)
-tabelaEspetaculos = Tabela("espetaculos", Espetaculo)
 
-banco = Banco("Banco", [tabelaPapeis, tabelaFuncionarios, tabelaAtracoes, tabelaEspetaculos])
+banco = Banco("Banco", [tabelaPapeis, tabelaFuncionarios, tabelaAtracoes])
 
 def cadastrarFuncionario() -> dict:
     nome = input("Nome: ")
