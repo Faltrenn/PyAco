@@ -18,6 +18,12 @@ class Item:
             setattr(self, atributo, getattr(item, atributo))
 
 
+class ChaveEstrangeira:
+    class Metodos:
+        destruicao = 0
+        remocao = 1
+
+
 class Tabela:
     def __init__(self, nome: str, tipo: Type[Item]) -> None:
         self.nome = nome
@@ -39,12 +45,12 @@ class Tabela:
                 return item
         return None
 
-    def remover(self, chave_primaria: str) -> None:
+    def remover(self, chave_primaria: str, metodo_ci = None) -> None:
         item = self.pesquisar(chave_primaria)
         if item in self.items:
             self.items.remove(item)
 
-            Banco.Banco.banco.remover(item)
+            Banco.Banco.banco.remover(item, metodo_ci)
 
             self.salvar()
     
@@ -109,14 +115,14 @@ class Funcionario(Item):
     
     def get_dependencias(self) -> dict:
         return {
-            Papel: self.papel
+            Papel: ["papel", self.papel]
         }
     
     def get_data(self):
         return {
             "nome": self.nome,
             "cpf": self.cpf,
-            "papel": self.papel.chave_primaria,
+            "papel": self.papel.chave_primaria if self.papel else None,
             "telefone": self.telefone,
         }
 
@@ -128,8 +134,55 @@ class Atracao(Item):
         self.nome = nome
         self.funcionarios = [Banco.Banco.banco.pesquisar(Funcionario(cpf=funcionario)) for funcionario in funcionarios]
     
+    def get_dependencias(self) -> dict:
+        return {
+            Funcionario: ["funcionarios", self.funcionarios]
+        }
+
     def get_data(self):
         return {
             "nome": self.nome,
             "funcionarios": [funcionario.chave_primaria for funcionario in self.funcionarios],
+        }
+
+
+class Apresentacao(Item):
+    dependencias = [Atracao]
+    def __init__(self, nome: str, data: str, atracoes: List[str]) -> None:
+        super().__init__(nome)
+        self.nome = nome
+        self.data = data
+        self.atracoes = [Banco.Banco.banco.pesquisar(Atracao(nome=atracao)) for atracao in atracoes]
+
+    def get_dependencias(self) -> dict:
+        return {
+            Atracao: ["atracoes", self.atracoes]
+        }
+
+    def get_data(self):
+        return {
+            "nome": self.nome,
+            "data": self.data,
+            "atracoes": [atracao.chave_primaria for atracao in self.atracoes],
+        }
+
+
+class Espetaculo(Item):
+    dependencias = [Atracao]
+    def __init__(self, cidade: str, data: str, apresentacoes: List[str]) -> None:
+        super().__init__(data)
+        self.cidade = cidade
+        self.data = data
+        self.apresentacoes = [Banco.Banco.banco.pesquisar(Apresentacao(nome=apresentacao)) for apresentacao in apresentacoes]
+
+    def get_dependencias(self) -> dict:
+        return {
+            Apresentacao: ["apresentacoes", self.apresentacoes]
+        }
+
+    def get_data(self):
+        return {
+            "cidade": self.cidade,
+            "data": self.data,
+            "apresentacoes": [apresentacao.chave_primaria for apresentacao in self.apresentacoes],
         }

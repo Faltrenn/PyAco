@@ -23,15 +23,30 @@ class Banco:
         except Exception as error:
             print(error)
     
-    def remover(self, item: Tabelas.Item) -> None:
+    def remover(self, item: Tabelas.Item, metodo_ci: Tabelas.ChaveEstrangeira.Metodos) -> None:
         for tabela in self.tabelas:
             for dependencia in tabela.tipo.dependencias:
                 if isinstance(item, dependencia):
                     for i in tabela.items:
                         for dep, dep_item in i.get_dependencias().items():
-                            if isinstance(item, dep) and dep_item.chave_primaria == item.chave_primaria:
-                                tabela.remover(i.chave_primaria)
-                                break
+                            if isinstance(item, dep):
+                                print(dep_item)
+                                if isinstance(dep_item[1], list):
+                                    for j in dep_item[1]:
+                                        if j.chave_primaria == item.chave_primaria:
+                                            match metodo_ci:
+                                                case Tabelas.ChaveEstrangeira.Metodos.destruicao:
+                                                    tabela.remover(item.chave_primaria)
+                                                case Tabelas.ChaveEstrangeira.Metodos.remocao:
+                                                    print(getattr(i, dep_item[0]))
+                                                    getattr(i, dep_item[0]).remove(j)
+                                            break
+                                else:
+                                    match metodo_ci:
+                                        case Tabelas.ChaveEstrangeira.Metodos.destruicao:
+                                            tabela.remover(i.chave_primaria)
+                                        case Tabelas.ChaveEstrangeira.Metodos.remocao:
+                                            setattr(i, dep_item[0], None)
     
     def pesquisar(self, item: Tabelas.Item) -> Tabelas.Item:
         for tabela in self.tabelas:

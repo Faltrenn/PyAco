@@ -1,15 +1,16 @@
 # PyAço: Sistema de gestão de circo
 
 from Banco import Banco
-from Tabelas import Tabela, Funcionario, Atracao, Papel
+from Tabelas import Tabela, Funcionario, Atracao, Papel, Espetaculo, ChaveEstrangeira
 
 largura = 50
 
 tabelaFuncionarios = Tabela("funcionarios", Funcionario)
 tabelaAtracoes = Tabela("atracoes", Atracao)
 tabelaPapeis = Tabela("papeis", Papel)
+tabelaEspetaculos = Tabela("espetaculos", Espetaculo)
 
-banco = Banco("Banco", [tabelaPapeis, tabelaFuncionarios, tabelaAtracoes])
+banco = Banco("Banco", [tabelaPapeis, tabelaFuncionarios, tabelaAtracoes, tabelaEspetaculos])
 
 def cadastrarFuncionario() -> dict:
     nome = input("Nome: ")
@@ -56,7 +57,7 @@ def removerFuncionario():
 
     chave_primaria = input("Digite a chave primaria do funcionario: ")
     
-    tabelaFuncionarios.remover(chave_primaria)
+    tabelaFuncionarios.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
 
 menuFuncionariosOpcoes = [
     ["Cadastrar funcionário", cadastrarFuncionario],
@@ -89,15 +90,22 @@ def cadastrarAtracao():
             continue
         funcionario = tabelaFuncionarios.pesquisar(opc)
         if funcionario:
-            funcionarios.append(funcionario)
+            funcionarios.append(opc)
         else:
             print("Funcionario não encontrado")
     tabelaAtracoes.adicionar(Atracao(nome, funcionarios))
 
+def removerAtracao():
+    tabelaAtracoes.show()
+
+    chave_primaria = input("Digite a chave primaria da atracao: ")
+    
+    tabelaAtracoes.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
 
 menuAtracoesOpcoes = [
     ["Cadastrar atracão", cadastrarAtracao],
     ["Visualizar atrações", tabelaAtracoes.show],
+    ["Remover atracão", removerAtracao],
 ]
 
 def menuAtracoes():
@@ -145,7 +153,7 @@ def removerPapel():
 
     chave_primaria = input("Digite a chave primaria do papel: ")
     
-    tabelaPapeis.remover(chave_primaria)
+    tabelaPapeis.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
 
 menuPapelOpcoes = [
     ["Cadastrar papel", cadastrarPapel],

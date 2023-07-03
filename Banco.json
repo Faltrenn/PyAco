@@ -1,6 +1,16 @@
 {
-    "papeis": [],
+    "papeis": [
+        {
+            "nome": "456",
+            "descricao": "456"
+        }
+    ],
     "funcionarios": [],
-    "atracoes": [],
+    "atracoes": [
+        {
+            "nome": "123",
+            "funcionarios": []
+        }
+    ],
     "espetaculos": []
 }
