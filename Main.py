@@ -1,15 +1,16 @@
 # PyAço: Sistema de gestão de circo
 
 from Banco import Banco
-from Tabelas import Tabela, Funcionario, Atracao, Papel
+from Tabelas import Tabela, Funcionario, Atracao, Papel, Espetaculo
 
 largura = 50
 
 tabelaFuncionarios = Tabela("funcionarios", Funcionario)
 tabelaAtracoes = Tabela("atracoes", Atracao)
-tabelaPapel = Tabela("papel", Papel)
+tabelaPapeis = Tabela("papeis", Papel)
+tabelaEspetaculos = Tabela("espetaculos", Espetaculo)
 
-banco = Banco("Banco", [tabelaPapel, tabelaFuncionarios, tabelaAtracoes])
+banco = Banco("Banco", [tabelaPapeis, tabelaFuncionarios, tabelaAtracoes, tabelaEspetaculos])
 
 def cadastrarFuncionario() -> dict:
     nome = input("Nome: ")
@@ -17,7 +18,7 @@ def cadastrarFuncionario() -> dict:
 
     papel = None
     while papel == None:
-        tabelaPapel.show()
+        tabelaPapeis.show()
         papel = input("Papel: ")
     telefone = input("Telefone: ")
     funcionario = Funcionario(nome, cpf, papel, telefone)
@@ -114,38 +115,38 @@ def cadastrarPapel():
     nome = input("Nome: ")
     descricao = input("Descrição: ")
     papel = Papel(nome, descricao)
-    tabelaPapel.adicionar(papel)
+    tabelaPapeis.adicionar(papel)
 
 def consultarPapel():
-    tabelaPapel.show()
+    tabelaPapeis.show()
 
     chave_primaria = input("Digite a chave primaria do papel: ")
     
-    papel = tabelaPapel.pesquisar(chave_primaria)
+    papel = tabelaPapeis.pesquisar(chave_primaria)
     print(f"Papel: {papel.get_data() if papel else 'Não encontrado'}")
 
 def editarPapel():
-    tabelaPapel.show()
+    tabelaPapeis.show()
 
     chave_primaria = input("Digite a chave primaria do papel: ")
     
-    papel = tabelaPapel.pesquisar(chave_primaria)
+    papel = tabelaPapeis.pesquisar(chave_primaria)
     if papel:
         print(f"Papel: {papel.get_data()}")
 
         nome = input("Nome: ")
         papel = Papel(nome)
 
-        tabelaPapel.editar(chave_primaria, papel)
+        tabelaPapeis.editar(chave_primaria, papel)
     else:
         print("Papel não encontrado")
 
 def removerPapel():
-    tabelaPapel.show()
+    tabelaPapeis.show()
 
     chave_primaria = input("Digite a chave primaria do papel: ")
     
-    tabelaPapel.remover(chave_primaria)
+    tabelaPapeis.remover(chave_primaria)
 
 menuPapelOpcoes = [
     ["Cadastrar papel", cadastrarPapel],

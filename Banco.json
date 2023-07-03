@@ -1,10 +1,6 @@
 {
-    "papel": [
-        {
-            "nome": "123",
-            "descricao": "descricao"
-        }
-    ],
+    "papeis": [],
     "funcionarios": [],
-    "atracoes": []
+    "atracoes": [],
+    "espetaculos": []
 }

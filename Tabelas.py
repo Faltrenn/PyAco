@@ -12,6 +12,10 @@ class Item:
 
     def get_data(self):
         pass
+    
+    def substituir(self, item: "Item") -> None:
+        for atributo in item.__dict__:
+            setattr(self, atributo, getattr(item, atributo))
 
 
 class Tabela:
@@ -48,8 +52,7 @@ class Tabela:
         if isinstance(item, self.tipo):
             for item2 in self.items:
                 if item2.chave_primaria == chave_primaria:
-                    self.items.remove(item2)
-                    self.items.append(item)
+                    item2.substituir(item)
                     break
 
             self.salvar()
