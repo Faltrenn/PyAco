@@ -1,11 +1,24 @@
 {
     "papeis": [
         {
-            "nome": "456",
-            "descricao": "456"
+            "nome": "asd",
+            "descricao": "descricao"
         }
     ],
-    "funcionarios": [],
+    "funcionarios": [
+        {
+            "nome": "Umanel",
+            "cpf": "12",
+            "papel": "asd",
+            "telefone": "123"
+        },
+        {
+            "nome": "Manel",
+            "cpf": "456",
+            "papel": null,
+            "telefone": "567"
+        }
+    ],
     "atracoes": [
         {
             "nome": "123",

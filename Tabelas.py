@@ -10,7 +10,7 @@ class Item:
     def get_dependencias(self) -> dict:
         return None
 
-    def get_data(self):
+    def tudo(self):
         pass
     
     def substituir(self, item: "Item") -> None:
@@ -39,11 +39,31 @@ class Tabela:
 
         self.salvar()
     
-    def pesquisar(self, chave_primaria: str) -> Item:
+    def pesquisar(self, **filtros) -> Item:
+        items = []
+        if "item" in filtros:
+            if isinstance(filtros["item"], self.tipo):
+                for item in self.items:
+                    if item.chave_primaria == filtros["item"].chave_primaria:
+                        return item
+            return None
+        
         for item in self.items:
-            if item.chave_primaria == chave_primaria:
-                return item
-        return None
+            for atributo, valor in filtros.items():
+                if hasattr(item, atributo) and getattr(item, atributo) == valor:
+                    items.append(item)
+                else:
+                    if item in items:
+                        items.remove(item)
+                    break
+            
+
+        return items[0] if len(items) > 0 else None
+
+        # for item in self.items:
+        #     if item.chave_primaria == chave_primaria:
+        #         return item
+        # return None
 
     def remover(self, chave_primaria: str, metodo_ci = None) -> None:
         item = self.pesquisar(chave_primaria)
@@ -73,17 +93,17 @@ class Tabela:
                     atributos[atributo] = item[atributo]
             self.items.append(self.tipo(**atributos))
 
-    def get_data(self) -> list:
+    def tudo(self) -> list:
         data = []
         for item in self.items:
-            data.append(item.get_data())
+            data.append(item.tudo())
         return data
     
     def show(self) -> None:
         print(f"Tabela: {self.nome}")
         for item in self.items:
             print("-" * 60)
-            print(f"{item.chave_primaria}: {item.get_data()}")
+            print(f"{item.chave_primaria}: {item.tudo()}")
             print("-" * 60)
         print()
 
@@ -94,7 +114,7 @@ class Papel(Item):
         self.nome = nome
         self.descricao = descricao
     
-    def get_data(self):
+    def tudo(self):
         return {
             "nome": self.nome,
             "descricao": self.descricao,
@@ -118,7 +138,7 @@ class Funcionario(Item):
             Papel: ["papel", self.papel]
         }
     
-    def get_data(self):
+    def tudo(self):
         return {
             "nome": self.nome,
             "cpf": self.cpf,
@@ -139,7 +159,7 @@ class Atracao(Item):
             Funcionario: ["funcionarios", self.funcionarios]
         }
 
-    def get_data(self):
+    def tudo(self):
         return {
             "nome": self.nome,
             "funcionarios": [funcionario.chave_primaria for funcionario in self.funcionarios],
@@ -159,7 +179,7 @@ class Apresentacao(Item):
             Atracao: ["atracoes", self.atracoes]
         }
 
-    def get_data(self):
+    def tudo(self):
         return {
             "nome": self.nome,
             "data": self.data,
@@ -180,7 +200,7 @@ class Espetaculo(Item):
             Apresentacao: ["apresentacoes", self.apresentacoes]
         }
 
-    def get_data(self):
+    def tudo(self):
         return {
             "cidade": self.cidade,
             "data": self.data,

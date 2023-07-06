@@ -1,7 +1,9 @@
 # PyAço: Sistema de gestão de circo
 
 from Banco import Banco
-from Tabelas import Tabela, Funcionario, Atracao, Papel, Espetaculo, ChaveEstrangeira
+from Tabelas import Tabela, Funcionario, Atracao, Papel, Espetaculo, ChaveEstrangeira, Item
+from typing import Type
+
 
 largura = 50
 
@@ -12,7 +14,7 @@ tabelaEspetaculos = Tabela("espetaculos", Espetaculo)
 
 banco = Banco("Banco", [tabelaPapeis, tabelaFuncionarios, tabelaAtracoes, tabelaEspetaculos])
 
-def cadastrarFuncionario() -> dict:
+def cadastrar_funcionario() -> dict:
     nome = input("Nome: ")
     cpf = input("CPF: ")
 
@@ -25,22 +27,22 @@ def cadastrarFuncionario() -> dict:
 
     tabelaFuncionarios.adicionar(funcionario)
 
-def consultarFuncionario():
+def consultar_funcionario():
     tabelaFuncionarios.show()
 
     chave_primaria = input("Digite a chave primaria do funcionario: ")
     
     funcionario = tabelaFuncionarios.pesquisar(chave_primaria)
-    print(f"Funcionario: {funcionario.get_data() if funcionario else 'Não encontrado'}")
+    print(f"Funcionario: {funcionario.tudo() if funcionario else 'Não encontrado'}")
 
-def editarFuncionario():
+def editar_funcionario():
     tabelaFuncionarios.show()
 
     chave_primaria = input("Digite a chave primaria do funcionario: ")
     
     funcionario = tabelaFuncionarios.pesquisar(chave_primaria)
     if funcionario:
-        print(f"Funcionario: {funcionario.get_data()}")
+        print(f"Funcionario: {funcionario.tudo()}")
 
         nome = input("Nome: ")
         cpf = input("CPF: ")
@@ -52,32 +54,32 @@ def editarFuncionario():
     else:
         print("Funcionario não encontrado")
 
-def removerFuncionario():
+def remover_funcionario():
     tabelaFuncionarios.show()
 
     chave_primaria = input("Digite a chave primaria do funcionario: ")
     
     tabelaFuncionarios.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
 
-menuFuncionariosOpcoes = [
-    ["Cadastrar funcionário", cadastrarFuncionario],
-    ["Consultar funcionário", consultarFuncionario],
-    ["Editar funcionário", editarFuncionario],
-    ["Remover funcionário", removerFuncionario],
+menu_funcionarios_opcoes = [
+    ["Cadastrar funcionário", cadastrar_funcionario],
+    ["Consultar funcionário", consultar_funcionario],
+    ["Editar funcionário", editar_funcionario],
+    ["Remover funcionário", remover_funcionario],
 ]
 
-def menuFuncionarios():
+def menu_funcionarios():
     opc = None
     while opc != "":
-        for c, opcao in enumerate(menuFuncionariosOpcoes):
+        for c, opcao in enumerate(menu_funcionarios_opcoes):
             print(f"{c + 1} - {opcao[0]}")
-        opc = input("Digite a opção desejada, ou enter para voltar:")
+        opc = input("Digite a opção desejada, ou enter para voltar: ")
         if opc == "":
             continue
-        menuFuncionariosOpcoes[int(opc)-1][1]()
+        menu_funcionarios_opcoes[int(opc)-1][1]()
 
 
-def cadastrarAtracao():
+def cadastrar_atracao():
     nome = input("Nome: ")
 
     tabelaFuncionarios.show()
@@ -95,51 +97,51 @@ def cadastrarAtracao():
             print("Funcionario não encontrado")
     tabelaAtracoes.adicionar(Atracao(nome, funcionarios))
 
-def removerAtracao():
+def remover_atracao():
     tabelaAtracoes.show()
 
     chave_primaria = input("Digite a chave primaria da atracao: ")
     
     tabelaAtracoes.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
 
-menuAtracoesOpcoes = [
-    ["Cadastrar atracão", cadastrarAtracao],
+menu_atracoes_opcoes = [
+    ["Cadastrar atracão", cadastrar_atracao],
     ["Visualizar atrações", tabelaAtracoes.show],
-    ["Remover atracão", removerAtracao],
+    ["Remover atracão", remover_atracao],
 ]
 
-def menuAtracoes():
+def menu_atracoes():
     opc = None
     while opc != "":
-        for c, opcao in enumerate(menuAtracoesOpcoes):
+        for c, opcao in enumerate(menu_atracoes_opcoes):
             print(f"{c + 1} - {opcao[0]}")
-        opc = input("Digite a opção desejada, ou enter para voltar:")
+        opc = input("Digite a opção desejada, ou enter para voltar: ")
         if opc == "":
             continue
-        menuAtracoesOpcoes[int(opc)-1][1]()
+        menu_atracoes_opcoes[int(opc)-1][1]()
 
-def cadastrarPapel():
+def cadastrar_papel():
     nome = input("Nome: ")
     descricao = input("Descrição: ")
     papel = Papel(nome, descricao)
     tabelaPapeis.adicionar(papel)
 
-def consultarPapel():
+def consultar_papel():
     tabelaPapeis.show()
 
     chave_primaria = input("Digite a chave primaria do papel: ")
     
     papel = tabelaPapeis.pesquisar(chave_primaria)
-    print(f"Papel: {papel.get_data() if papel else 'Não encontrado'}")
+    print(f"Papel: {papel.tudo() if papel else 'Não encontrado'}")
 
-def editarPapel():
+def editar_papel():
     tabelaPapeis.show()
 
     chave_primaria = input("Digite a chave primaria do papel: ")
     
     papel = tabelaPapeis.pesquisar(chave_primaria)
     if papel:
-        print(f"Papel: {papel.get_data()}")
+        print(f"Papel: {papel.tudo()}")
 
         nome = input("Nome: ")
         papel = Papel(nome)
@@ -148,31 +150,31 @@ def editarPapel():
     else:
         print("Papel não encontrado")
 
-def removerPapel():
+def remover_papel():
     tabelaPapeis.show()
 
     chave_primaria = input("Digite a chave primaria do papel: ")
     
     tabelaPapeis.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
 
-menuPapelOpcoes = [
-    ["Cadastrar papel", cadastrarPapel],
-    ["Consultar papel", consultarPapel],
-    ["Editar papel", editarPapel],
-    ["Remover papel", removerPapel],
+menu_papel_opcoes = [
+    ["Cadastrar papel", cadastrar_papel],
+    ["Consultar papel", consultar_papel],
+    ["Editar papel", editar_papel],
+    ["Remover papel", remover_papel],
 ]
 
-def menuPapel():
+def menu_papel():
     opc = None
     while opc != "":
-        for c, opcao in enumerate(menuPapelOpcoes):
+        for c, opcao in enumerate(menu_papel_opcoes):
             print(f"{c + 1} - {opcao[0]}")
-        opc = input("Digite a opção desejada, ou enter para voltar:")
+        opc = input("Digite a opção desejada, ou enter para voltar: ")
         if opc == "":
             continue
-        menuPapelOpcoes[int(opc)-1][1]()
+        menu_papel_opcoes[int(opc)-1][1]()
 
-def menuEspetaculos():
+def menu_espetaculos():
     print("Cadastro de espetáculos")
     print("Cidade")
     print("Local")
@@ -186,11 +188,22 @@ def sair():
     banco.salvar()
     exit()
 
-opcoesMenu = [
-    ["Menu de funcionários", menuFuncionarios],
-    ["Menu de atracões", menuAtracoes],
-    ["Menu de espetáculos", menuEspetaculos],
-    ["Menu de papel", menuPapel],
+def pegar_tudo(tipo: Type[Item]):
+    return banco.tudo(tipo)
+
+menu_relatorios_opcoes = [
+
+]
+
+def menu_relatorios():
+    pass
+
+opcoes_menu = [
+    ["Menu de funcionários", menu_funcionarios],
+    ["Menu de atracões", menu_atracoes],
+    ["Menu de espetáculos", menu_espetaculos],
+    ["Menu de papel", menu_papel],
+    ["Menu de relatórios", menu_relatorios]
     ["Sair", sair],
 ]
 
@@ -199,9 +212,9 @@ print(f"{' PyAço: Sistema de gestão de circo ':=^{largura}}")
 print("=" * largura)
 
 while True:
-    for c, opcao in enumerate(opcoesMenu):
+    for c, opcao in enumerate(opcoes_menu):
         print(f"{c + 1} - {opcao[0]}")
 
     opcao = int(input("Digite a opção desejada: "))
 
-    opcoesMenu[opcao - 1][1]()
+    opcoes_menu[opcao - 1][1]()

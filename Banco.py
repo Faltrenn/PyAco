@@ -30,7 +30,6 @@ class Banco:
                     for i in tabela.items:
                         for dep, dep_item in i.get_dependencias().items():
                             if isinstance(item, dep):
-                                print(dep_item)
                                 if isinstance(dep_item[1], list):
                                     for j in dep_item[1]:
                                         if j.chave_primaria == item.chave_primaria:
@@ -38,7 +37,6 @@ class Banco:
                                                 case Tabelas.ChaveEstrangeira.Metodos.destruicao:
                                                     tabela.remover(item.chave_primaria)
                                                 case Tabelas.ChaveEstrangeira.Metodos.remocao:
-                                                    print(getattr(i, dep_item[0]))
                                                     getattr(i, dep_item[0]).remove(j)
                                             break
                                 else:
@@ -47,19 +45,26 @@ class Banco:
                                             tabela.remover(i.chave_primaria)
                                         case Tabelas.ChaveEstrangeira.Metodos.remocao:
                                             setattr(i, dep_item[0], None)
+                                    break
     
     def pesquisar(self, item: Tabelas.Item) -> Tabelas.Item:
         for tabela in self.tabelas:
             if isinstance(item, tabela.tipo):
-                return tabela.pesquisar(item.chave_primaria)
+                return tabela.pesquisar(item = item)
         return None
-    
-    def get_data(self) -> dict:
-        data = {}
-        for tabela in self.tabelas:
-            data[tabela.nome] = tabela.get_data()
-        return data
+
+    def tudo(self, tipo: Type[Tabelas.Item] = None):
+        if tipo:
+            for tabela in self.tabelas:
+                if tabela.tipo == tipo:
+                    return tabela.tudo()
+            return None
+        else:
+            data = {}
+            for tabela in self.tabelas:
+                data[tabela.nome] = tabela.tudo()
+            return data
     
     def salvar(self) -> None:
         with open(f"{self.nome}.json", "w") as arquivo:
-            arquivo.write(dumps(self.get_data(), indent=4))
+            arquivo.write(dumps(self.tudo(), indent=4))
