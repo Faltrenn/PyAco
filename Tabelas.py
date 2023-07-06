@@ -1,6 +1,7 @@
 from typing import List, Type
 import Banco
 
+tipos_comandos = ["contem"]
 
 class Item:
     dependencias = []
@@ -39,26 +40,63 @@ class Tabela:
 
         self.salvar()
     
-    def pesquisar(self, **filtros) -> Item:
-        items = []
-        if "item" in filtros:
-            if isinstance(filtros["item"], self.tipo):
-                for item in self.items:
-                    if item.chave_primaria == filtros["item"].chave_primaria:
-                        return item
-            return None
-        
-        for item in self.items:
-            for atributo, valor in filtros.items():
-                if hasattr(item, atributo) and getattr(item, atributo) == valor:
-                    items.append(item)
+    def pesquisar(self, **filtros) -> List[Item]:
+        itens = []
+        removidos = []
+        for c, filtro in enumerate(filtros):
+            aux = filtro.split("_")
+            comando = aux
+            if len(aux) > 1:
+                comando = ["_".join(comando) if comando[-1] not in tipos_comandos else "_".join(comando[:-1])]
+                comando.append(aux[-1]) if aux[-1] in tipos_comandos else None
+            if c == 0:
+                if len(comando) == 1:
+                    for item in self.items:
+                        if hasattr(item, comando[0]) and str(getattr(item, comando[0])) == str(filtros[filtro]):
+                            itens.append(item)
                 else:
-                    if item in items:
-                        items.remove(item)
-                    break
-            
+                    for item in self.items:
+                        if hasattr(item, comando[0]):
+                            valor = str(getattr(item, comando[0]))
+                            if len(comando) > 1:
+                                if "contem" in comando[1] and filtros[filtro] in valor:
+                                    itens.append(item)
+                            else:
+                                if filtros[filtro] == valor:
+                                    itens.append(item)
+            else:
+                for item in itens:
+                    if hasattr(item, comando[0]):
+                        valor = str(getattr(item, comando[0]))
+                    if len(comando) > 1:
+                        if "contem" in comando[1] and filtros[filtro] not in valor:
+                            removidos.append(item)
+                    else:
+                        if filtros[filtro] != valor:
+                            removidos.append(item)
 
-        return items[0] if len(items) > 0 else None
+        for removido in removidos:
+            print("removidos", removido.tudo())
+            itens.remove(removido)
+
+        # for item in self.items:
+        #     for atributo, valor in filtros.items():
+        #         if hasattr(item, atributo) and getattr(item, atributo) == valor:
+        #             items.append(item)
+        #         else:
+        #             if item in items:
+        #                 items.remove(item)
+        #             break
+            
+        # quantidade = len(itens)
+        # if quantidade == 1:
+        #     return itens[0]
+        # elif quantidade > 1:
+        #     return itens
+        # else:
+        #     return None
+
+        return itens if len(itens) > 0 else None
 
         # for item in self.items:
         #     if item.chave_primaria == chave_primaria:
@@ -130,7 +168,8 @@ class Funcionario(Item):
         super().__init__(cpf)
         self.nome = nome
         self.cpf = cpf
-        self.papel = Banco.Banco.banco.pesquisar(Papel(papel))
+        p = Banco.Banco.banco.pesquisar(Papel(papel))
+        self.papel = p[0] if p else None
         self.telefone = telefone
     
     def get_dependencias(self) -> dict:
@@ -152,8 +191,11 @@ class Atracao(Item):
     def __init__(self, nome: str = "nome", funcionarios: List[str] = []) -> None:
         super().__init__(nome)
         self.nome = nome
-        self.funcionarios = [Banco.Banco.banco.pesquisar(Funcionario(cpf=funcionario)) for funcionario in funcionarios]
-    
+        self.funcionarios = []
+        for funcionario in funcionarios:
+            func = Banco.Banco.banco.pesquisar(Funcionario(cpf=funcionario))
+            self.funcionarios.append(func[0]) if func else None
+
     def get_dependencias(self) -> dict:
         return {
             Funcionario: ["funcionarios", self.funcionarios]
@@ -172,7 +214,10 @@ class Apresentacao(Item):
         super().__init__(nome)
         self.nome = nome
         self.data = data
-        self.atracoes = [Banco.Banco.banco.pesquisar(Atracao(nome=atracao)) for atracao in atracoes]
+        self.atracoes = []
+        for atracao in atracoes:
+            atra = Banco.Banco.banco.pesquisar(Atracao(nome=atracao))
+            self.atracoes.append(atra[0]) if atra else None
 
     def get_dependencias(self) -> dict:
         return {
@@ -193,7 +238,10 @@ class Espetaculo(Item):
         super().__init__(data)
         self.cidade = cidade
         self.data = data
-        self.apresentacoes = [Banco.Banco.banco.pesquisar(Apresentacao(nome=apresentacao)) for apresentacao in apresentacoes]
+        self.apresentacoes = []
+        for apresentacao in apresentacoes:
+            apre = Banco.Banco.banco.pesquisar(Apresentacao(nome=apresentacao))
+            self.apresentacoes.append(apre[0]) if apre else None
 
     def get_dependencias(self) -> dict:
         return {

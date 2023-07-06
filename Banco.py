@@ -50,7 +50,7 @@ class Banco:
     def pesquisar(self, item: Tabelas.Item) -> Tabelas.Item:
         for tabela in self.tabelas:
             if isinstance(item, tabela.tipo):
-                return tabela.pesquisar(item = item)
+                return tabela.pesquisar(chave_primaria = item.chave_primaria)
         return None
 
     def tudo(self, tipo: Type[Tabelas.Item] = None):
