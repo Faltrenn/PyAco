@@ -35,7 +35,7 @@ class Tabela:
         if Banco.Banco.banco:
             Banco.Banco.banco.salvar()
     
-    def adicionar(self, item: Item):
+    def adicionar(self, item: Item) -> None:
         self.items.append(item)
 
         self.salvar()
@@ -76,32 +76,9 @@ class Tabela:
                             removidos.append(item)
 
         for removido in removidos:
-            print("removidos", removido.tudo())
             itens.remove(removido)
 
-        # for item in self.items:
-        #     for atributo, valor in filtros.items():
-        #         if hasattr(item, atributo) and getattr(item, atributo) == valor:
-        #             items.append(item)
-        #         else:
-        #             if item in items:
-        #                 items.remove(item)
-        #             break
-            
-        # quantidade = len(itens)
-        # if quantidade == 1:
-        #     return itens[0]
-        # elif quantidade > 1:
-        #     return itens
-        # else:
-        #     return None
-
         return itens if len(itens) > 0 else None
-
-        # for item in self.items:
-        #     if item.chave_primaria == chave_primaria:
-        #         return item
-        # return None
 
     def remover(self, chave_primaria: str, metodo_ci = None) -> None:
         item = self.pesquisar(chave_primaria)

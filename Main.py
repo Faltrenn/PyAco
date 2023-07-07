@@ -7,12 +7,12 @@ from typing import Type
 
 largura = 50
 
-tabelaFuncionarios = Tabela("funcionarios", Funcionario)
-tabelaAtracoes = Tabela("atracoes", Atracao)
-tabelaPapeis = Tabela("papeis", Papel)
-tabelaEspetaculos = Tabela("espetaculos", Espetaculo)
+tabela_funcionarios = Tabela("funcionarios", Funcionario)
+tabela_atracoes = Tabela("atracoes", Atracao)
+tabela_papeis = Tabela("papeis", Papel)
+tabela_espetaculos = Tabela("espetaculos", Espetaculo)
 
-banco = Banco("Banco", [tabelaPapeis, tabelaFuncionarios, tabelaAtracoes, tabelaEspetaculos])
+banco = Banco("Banco", [tabela_papeis, tabela_funcionarios, tabela_atracoes, tabela_espetaculos])
 
 def cadastrar_funcionario() -> dict:
     nome = input("Nome: ")
@@ -20,27 +20,27 @@ def cadastrar_funcionario() -> dict:
 
     papel = None
     while papel == None:
-        tabelaPapeis.show()
+        tabela_papeis.show()
         papel = input("Papel: ")
     telefone = input("Telefone: ")
     funcionario = Funcionario(nome, cpf, papel, telefone)
 
-    tabelaFuncionarios.adicionar(funcionario)
+    tabela_funcionarios.adicionar(funcionario)
 
 def consultar_funcionario():
-    tabelaFuncionarios.show()
+    tabela_funcionarios.show()
 
     chave_primaria = input("Digite a chave primaria do funcionario: ")
     
-    funcionario = tabelaFuncionarios.pesquisar(chave_primaria)
+    funcionario = tabela_funcionarios.pesquisar(chave_primaria = chave_primaria)[0]
     print(f"Funcionario: {funcionario.tudo() if funcionario else 'Não encontrado'}")
 
 def editar_funcionario():
-    tabelaFuncionarios.show()
+    tabela_funcionarios.show()
 
     chave_primaria = input("Digite a chave primaria do funcionario: ")
     
-    funcionario = tabelaFuncionarios.pesquisar(chave_primaria)
+    funcionario = tabela_funcionarios.pesquisar(chave_primaria)
     if funcionario:
         print(f"Funcionario: {funcionario.tudo()}")
 
@@ -50,16 +50,16 @@ def editar_funcionario():
         telefone = input("Telefone: ")
         funcionario = Funcionario(nome, cpf, papel, telefone)
 
-        tabelaFuncionarios.editar(chave_primaria, funcionario)
+        tabela_funcionarios.editar(chave_primaria, funcionario)
     else:
         print("Funcionario não encontrado")
 
 def remover_funcionario():
-    tabelaFuncionarios.show()
+    tabela_funcionarios.show()
 
     chave_primaria = input("Digite a chave primaria do funcionario: ")
     
-    tabelaFuncionarios.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
+    tabela_funcionarios.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
 
 menu_funcionarios_opcoes = [
     ["Cadastrar funcionário", cadastrar_funcionario],
@@ -82,7 +82,7 @@ def menu_funcionarios():
 def cadastrar_atracao():
     nome = input("Nome: ")
 
-    tabelaFuncionarios.show()
+    tabela_funcionarios.show()
 
     opc = None
     funcionarios = []
@@ -90,23 +90,23 @@ def cadastrar_atracao():
         opc = input("Digite a chave primaria do funcionario: ")
         if opc == "":
             continue
-        funcionario = tabelaFuncionarios.pesquisar(opc)
+        funcionario = tabela_funcionarios.pesquisar(chave_primaria = opc)
         if funcionario:
             funcionarios.append(opc)
         else:
             print("Funcionario não encontrado")
-    tabelaAtracoes.adicionar(Atracao(nome, funcionarios))
+    tabela_atracoes.adicionar(Atracao(nome, funcionarios))
 
 def remover_atracao():
-    tabelaAtracoes.show()
+    tabela_atracoes.show()
 
     chave_primaria = input("Digite a chave primaria da atracao: ")
     
-    tabelaAtracoes.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
+    tabela_atracoes.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
 
 menu_atracoes_opcoes = [
     ["Cadastrar atracão", cadastrar_atracao],
-    ["Visualizar atrações", tabelaAtracoes.show],
+    ["Visualizar atrações", tabela_atracoes.show],
     ["Remover atracão", remover_atracao],
 ]
 
@@ -124,38 +124,38 @@ def cadastrar_papel():
     nome = input("Nome: ")
     descricao = input("Descrição: ")
     papel = Papel(nome, descricao)
-    tabelaPapeis.adicionar(papel)
+    tabela_papeis.adicionar(papel)
 
 def consultar_papel():
-    tabelaPapeis.show()
+    tabela_papeis.show()
 
     chave_primaria = input("Digite a chave primaria do papel: ")
     
-    papel = tabelaPapeis.pesquisar(chave_primaria)
+    papel = tabela_papeis.pesquisar(chave_primaria = chave_primaria)
     print(f"Papel: {papel.tudo() if papel else 'Não encontrado'}")
 
 def editar_papel():
-    tabelaPapeis.show()
+    tabela_papeis.show()
 
     chave_primaria = input("Digite a chave primaria do papel: ")
     
-    papel = tabelaPapeis.pesquisar(chave_primaria)
+    papel = tabela_papeis.pesquisar(chave_primaria = chave_primaria)
     if papel:
         print(f"Papel: {papel.tudo()}")
 
         nome = input("Nome: ")
         papel = Papel(nome)
 
-        tabelaPapeis.editar(chave_primaria, papel)
+        tabela_papeis.editar(chave_primaria, papel)
     else:
         print("Papel não encontrado")
 
 def remover_papel():
-    tabelaPapeis.show()
+    tabela_papeis.show()
 
     chave_primaria = input("Digite a chave primaria do papel: ")
     
-    tabelaPapeis.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
+    tabela_papeis.remover(chave_primaria, ChaveEstrangeira.Metodos.remocao)
 
 menu_papel_opcoes = [
     ["Cadastrar papel", cadastrar_papel],
@@ -203,7 +203,7 @@ opcoes_menu = [
     ["Menu de atracões", menu_atracoes],
     ["Menu de espetáculos", menu_espetaculos],
     ["Menu de papel", menu_papel],
-    ["Menu de relatórios", menu_relatorios]
+    ["Menu de relatórios", menu_relatorios],
     ["Sair", sair],
 ]
 
