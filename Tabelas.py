@@ -36,9 +36,14 @@ class Tabela:
             Banco.Banco.banco.salvar()
     
     def adicionar(self, item: Item) -> None:
-        self.items.append(item)
-
-        self.salvar()
+        if isinstance(item, self.tipo):
+            if not self.pesquisar(chave_primaria = item.chave_primaria):
+                self.items.append(item)
+                self.salvar()
+            else:
+                print(f"Já existe um item com a chave primaria {item.chave_primaria}")
+        else:
+            print(f"O item não é do tipo {self.tipo}")
     
     def pesquisar(self, **filtros) -> List[Item]:
         itens = []
@@ -57,13 +62,22 @@ class Tabela:
                 else:
                     for item in self.items:
                         if hasattr(item, comando[0]):
-                            valor = str(getattr(item, comando[0]))
-                            if len(comando) > 1:
-                                if "contem" in comando[1] and filtros[filtro] in valor:
+                            valor = getattr(item, comando[0])
+                            if isinstance(valor, Item):
+                                valor = valor.chave_primaria
+                            elif isinstance(valor, list):
+                                valor = [v.chave_primaria for v in valor]
+                            
+                            if "contem" in comando[1]:
+                                ft = filtros[filtro]
+                                if isinstance(ft, list):
+                                    for f in ft:
+                                        if f in valor:
+                                            itens.append(item)
+                                            break
+                                if isinstance(ft, str) and ft in valor:
                                     itens.append(item)
-                            else:
-                                if filtros[filtro] == valor:
-                                    itens.append(item)
+
             else:
                 for item in itens:
                     if hasattr(item, comando[0]):
@@ -90,6 +104,9 @@ class Tabela:
             self.salvar()
     
     def editar(self, chave_primaria: str, item: Item) -> None:
+        if self.pesquisar(chave_primaria = item.chave_primaria):
+            print(f"Já existe um item com a chave primaria {item.chave_primaria}")
+            return
         if isinstance(item, self.tipo):
             for item2 in self.items:
                 if item2.chave_primaria == chave_primaria:
