@@ -1,29 +1,112 @@
 {
     "papeis": [
         {
-            "nome": "asd",
-            "descricao": "descricao"
+            "nome": "Papel1",
+            "descricao": "Descricao1"
+        },
+        {
+            "nome": "Papel2",
+            "descricao": "Descricao2"
+        },
+        {
+            "nome": "Papel3",
+            "descricao": "Descricao3"
+        },
+        {
+            "nome": "Papa",
+            "descricao": "Descricao1"
+        },
+        {
+            "nome": "Papal",
+            "descricao": "Descricao2"
+        },
+        {
+            "nome": "Tap",
+            "descricao": "Descricao3"
         }
     ],
     "funcionarios": [
         {
-            "nome": "Umanel",
-            "cpf": "12",
-            "papel": "asd",
-            "telefone": "123"
+            "nome": "Funcionario1",
+            "cpf": "1",
+            "papel": "Papel1",
+            "telefone": "1"
         },
         {
-            "nome": "Manel",
-            "cpf": "456",
-            "papel": null,
-            "telefone": "567"
+            "nome": "Funcionario2",
+            "cpf": "2",
+            "papel": "Papel2",
+            "telefone": "2"
+        },
+        {
+            "nome": "Funcionario3",
+            "cpf": "3",
+            "papel": "Papel3",
+            "telefone": "3"
+        },
+        {
+            "nome": "Funcionario4",
+            "cpf": "4",
+            "papel": "Papel1",
+            "telefone": "4"
+        },
+        {
+            "nome": "Funcionario5",
+            "cpf": "5",
+            "papel": "Papel2",
+            "telefone": "5"
+        },
+        {
+            "nome": "Funcionario6",
+            "cpf": "6",
+            "papel": "Papel3",
+            "telefone": "6"
+        },
+        {
+            "nome": "Funcionario10",
+            "cpf": "7",
+            "papel": "Papa",
+            "telefone": "1"
+        },
+        {
+            "nome": "Funcionario20",
+            "cpf": "8",
+            "papel": "Papal",
+            "telefone": "2"
+        },
+        {
+            "nome": "Funcionario30",
+            "cpf": "9",
+            "papel": "Tap",
+            "telefone": "3"
         }
     ],
     "atracoes": [
         {
-            "nome": "123",
-            "funcionarios": []
+            "nome": "Atracao1",
+            "funcionarios": [
+                "1",
+                "2",
+                "3"
+            ]
+        },
+        {
+            "nome": "Atracao2",
+            "funcionarios": [
+                "3",
+                "4",
+                "5"
+            ]
         }
     ],
-    "espetaculos": []
+    "apresentacoes": [
+        {
+            "nome": "jk",
+            "data": "10/10/2023",
+            "horario": "22:00",
+            "atracoes": [
+                "Atracao1"
+            ]
+        }
+    ]
 }

@@ -17,6 +17,9 @@ class Item:
     def substituir(self, item: "Item") -> None:
         for atributo in item.__dict__:
             setattr(self, atributo, getattr(item, atributo))
+    
+    def __str__(self) -> str:
+        return self.chave_primaria
 
 
 class ChaveEstrangeira:
@@ -95,9 +98,9 @@ class Tabela:
         return itens if len(itens) > 0 else None
 
     def remover(self, chave_primaria: str, metodo_ci = None) -> None:
-        item = self.pesquisar(chave_primaria)
-        if item in self.items:
-            self.items.remove(item)
+        item = self.pesquisar(chave_primaria = chave_primaria)
+        if item:
+            self.items.remove(item[0])
 
             Banco.Banco.banco.remover(item, metodo_ci)
 
@@ -135,8 +138,12 @@ class Tabela:
         print(f"Tabela: {self.nome}")
         for item in self.items:
             print("-" * 60)
-            print(f"{item.chave_primaria}: {item.tudo()}")
-            print("-" * 60)
+            for atributo in item.__dict__:
+                attr = getattr(item, atributo)
+                if isinstance(attr, list):
+                    attr = [str(a) for a in attr]
+                print(f"{atributo}: {str(attr)}")
+        print("-" * 60)
         print()
 
 
@@ -151,9 +158,6 @@ class Papel(Item):
             "nome": self.nome,
             "descricao": self.descricao,
         }
-
-    def __str__(self) -> str:
-        return self.nome
 
 
 class Funcionario(Item):
@@ -178,6 +182,9 @@ class Funcionario(Item):
             "papel": self.papel.chave_primaria if self.papel else None,
             "telefone": self.telefone,
         }
+    
+    def __str__(self) -> str:
+        return self.nome
 
 
 class Atracao(Item):
@@ -204,10 +211,11 @@ class Atracao(Item):
 
 class Apresentacao(Item):
     dependencias = [Atracao]
-    def __init__(self, nome: str, data: str, atracoes: List[str]) -> None:
+    def __init__(self, nome: str = "", data: str = "", horario:str = "", atracoes: List[str] = []) -> None:
         super().__init__(nome)
         self.nome = nome
         self.data = data
+        self.horario = horario
         self.atracoes = []
         for atracao in atracoes:
             atra = Banco.Banco.banco.pesquisar(Atracao(nome=atracao))
@@ -222,29 +230,6 @@ class Apresentacao(Item):
         return {
             "nome": self.nome,
             "data": self.data,
+            "horario": self.horario,
             "atracoes": [atracao.chave_primaria for atracao in self.atracoes],
-        }
-
-
-class Espetaculo(Item):
-    dependencias = [Atracao]
-    def __init__(self, cidade: str, data: str, apresentacoes: List[str]) -> None:
-        super().__init__(data)
-        self.cidade = cidade
-        self.data = data
-        self.apresentacoes = []
-        for apresentacao in apresentacoes:
-            apre = Banco.Banco.banco.pesquisar(Apresentacao(nome=apresentacao))
-            self.apresentacoes.append(apre[0]) if apre else None
-
-    def get_dependencias(self) -> dict:
-        return {
-            Apresentacao: ["apresentacoes", self.apresentacoes]
-        }
-
-    def tudo(self):
-        return {
-            "cidade": self.cidade,
-            "data": self.data,
-            "apresentacoes": [apresentacao.chave_primaria for apresentacao in self.apresentacoes],
         }
